@@ -134,7 +134,13 @@ export default function AdminPage() {
               key={post._id}
               className={`border p-4 mb-4 rounded shadow-sm ${editing?._id === post._id ? 'bg-yellow-100' : 'bg-white'}`}
             >
-              <h3 className="text-lg font-bold">{post.title}</h3>
+             <h3
+  className="text-lg font-bold text-blue-600 cursor-pointer hover:underline"
+  onClick={() => router.push(`/blog/${post._id}`)}
+>
+  {post.title}
+</h3>
+
               <p className="text-gray-700">{post.content}</p>
               <div className="mt-2 space-x-2">
                 <button
