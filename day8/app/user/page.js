@@ -46,8 +46,14 @@ export default function UserPage() {
         ) : (
           posts.map((post) => (
             <div key={post._id} className="blog-card">
-              <h3>{post.title}</h3>
-              <p>{post.content}</p>
+              <h3
+  className="text-lg font-semibold text-blue-600 cursor-pointer hover:underline"
+  onClick={() => router.push(`/blog/${post._id}`)}
+>
+  {post.title}
+</h3>
+<p className="text-gray-700 line-clamp-3">{post.content}</p>
+
             </div>
           ))
         )}
