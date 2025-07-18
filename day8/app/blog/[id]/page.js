@@ -1,43 +1,35 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
-export default function BlogPostPage() {
-  const router = useRouter();
-  const params = useParams();
+export default async function BlogPostPage({ params }) {
   const { id } = params;
 
-  const [post, setPost] = useState(null);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/posts/${id}`, {
+      cache: 'no-store',
+    });
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const res = await fetch(`/api/posts/${id}`);
-        const data = await res.json();
-        setPost(data);
-      } catch (error) {
-        console.error('Error loading blog post:', error);
-      }
-    };
+    if (!res.ok) {
+      return notFound();
+    }
 
-    if (id) fetchPost();
-  }, [id]);
+    const post = await res.json();
 
-  if (!post) return <p className="p-4 text-lg">Loading post...</p>;
-
-  return (
-    <main className="p-6 max-w-3xl mx-auto">
-      <button
-        onClick={() => router.back()}
-        className="mb-4 bg-gray-600 text-white px-4 py-2 rounded"
-      >
-        ← Back
-      </button>
-
-      <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-      <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-line">
-        {post.content}
-      </p>
-    </main>
-  );
+    return (
+      <main className="p-6 max-w-3xl mx-auto">
+        <a
+          href="/user"
+          className="inline-block mb-4 text-sm text-blue-500 hover:underline"
+        >
+          ← Back
+        </a>
+        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+        <p className="text-lg text-gray-800 leading-relaxed whitespace-pre-line">
+          {post.content}
+        </p>
+      </main>
+    );
+  } catch (error) {
+    console.error('Error loading blog post:', error);
+    return <p className="p-4 text-red-600">Error loading post.</p>;
+  }
 }
